@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Assistant </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: left;
+        }
+        label {
+            font-weight: bold;
+        }
+        textarea, select, input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            background: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Assistant </h1>
+    <form id="ai-form">
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message" rows="4" cols="50"></textarea><br><br>
+        <label for="model">Model:</label><br>
+        <select id="model" name="model">
+            <option value="llama3">Llama3</option>
+            <option value="granite">Granite</option>
+            <option value="mixtral">Mixtral</option>
+        </select><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+    <div id="response"></div>
+    <footer>
+        &copy; 2025 Aboubacar Diarra. Tous droits réservés.
+    </footer>
+    <script>
+        document.getElementById('ai-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var message = document.getElementById('message').value;
+            var model = document.getElementById('model').value;
+            
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'message': message,
+                    'model': model
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.error){
+                    document.getElementById('response').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('response').innerText = 'Response: ' + data.response + '\nDuration: ' + data.duration.toFixed(2) + ' seconds' + '\nFull JSON: ' + JSON.stringify(data);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = 'Error: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>
